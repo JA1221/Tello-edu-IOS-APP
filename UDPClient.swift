@@ -46,14 +46,25 @@ open class UDPClient: Socket {
             super.init(address: "", port: 0) //TODO: change to init?
             return
         }
-        
+
         super.init(address: ip, port: port)
-      
         let fd: Int32 = c_yudpsocket_client()
+        //c_yudpsocket_server("192.168.43.36", port: 8787)
         if fd > 0 {
             self.fd = fd
         }
     }
+    //指定client IP & Port
+    public convenience init(address: String, port: Int32, myAddresss: String, myPort: Int32) {
+        self.init(address: address, port: port)
+        
+        let fd: Int32 = c_yudpsocket_server(myAddresss, port: myPort)
+        if fd > 0 {
+            self.fd = fd
+        }
+    }
+    
+
     
     /*
     * send data
