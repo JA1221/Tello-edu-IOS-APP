@@ -64,6 +64,30 @@
                                     <action selector="flipF:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Hsg-TN-PXZ"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AhB-QP-6EL">
+                                <rect key="frame" x="153" y="550" width="108" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="愛的魔力轉圈圈"/>
+                                <connections>
+                                    <action selector="cycle:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7so-eR-3OJ"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dLu-sj-WLT">
+                                <rect key="frame" x="184" y="588" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="就定位"/>
+                                <connections>
+                                    <action selector="pos:" destination="BYZ-38-t0r" eventType="touchUpInside" id="k2L-hL-MoI"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SKS-hQ-tOl">
+                                <rect key="frame" x="162" y="355" width="90" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="exit"/>
+                                <connections>
+                                    <action selector="cs:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vkx-ja-Hlp"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
