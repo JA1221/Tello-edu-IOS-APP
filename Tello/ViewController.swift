@@ -9,7 +9,6 @@ class ViewController: UIViewController {
     let serverPort = 8787
     //設定 IP Port , 指定UDP連線
     let host = "192.168.43.103"
-
     let port = 8889
     var client: UDPClient?
     var server: UDPServer?
@@ -17,7 +16,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        client = UDPClient(address: host, port: Int32(port),myAddresss: serverIP, myPort: Int32(serverPort))
+        client = UDPClient(address: host, port: Int32(port),myAddresss: serverIP, myPort: Int32(serverPort))//建立 UDP 連線
+        server = UDPServer(address: "0.0.0.0", port: 8890)
     }
 
     @IBAction func onClick(_ sender: Any) {
@@ -27,7 +27,6 @@ class ViewController: UIViewController {
             send( text)//傳送 textView文字指令
             sendData.text = ""//清空
             let s = client?.recv(5)
-
             print(s!.0)
             print(s!.1)
             print(s!.2)
