@@ -15,6 +15,7 @@
 		B49761B122B4012D0096F864 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B49761AF22B4012D0096F864 /* LaunchScreen.storyboard */; };
 		B49761BC22B4012D0096F864 /* TelloTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49761BB22B4012D0096F864 /* TelloTests.swift */; };
 		B49761C722B4012D0096F864 /* TelloUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49761C622B4012D0096F864 /* TelloUITests.swift */; };
+		B4A7EE6322C0BA580097356B /* 2018_Charlie Puth - Marvin Gaye.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = B4A7EE6222C0BA580097356B /* 2018_Charlie Puth - Marvin Gaye.mp3 */; };
 		B4EB223922B9FADE007F5A52 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB223522B9FADD007F5A52 /* Socket.swift */; };
 		B4EB223A22B9FADE007F5A52 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB223622B9FADE007F5A52 /* Result.swift */; };
 		B4EB223B22B9FADE007F5A52 /* UDPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB223722B9FADE007F5A52 /* UDPClient.swift */; };
@@ -53,6 +54,7 @@
 		B49761C222B4012D0096F864 /* TelloUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TelloUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B49761C622B4012D0096F864 /* TelloUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelloUITests.swift; sourceTree = "<group>"; };
 		B49761C822B4012D0096F864 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B4A7EE6222C0BA580097356B /* 2018_Charlie Puth - Marvin Gaye.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "2018_Charlie Puth - Marvin Gaye.mp3"; sourceTree = "<group>"; };
 		B4EB223322B9FADD007F5A52 /* Tello-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tello-Bridging-Header.h"; sourceTree = "<group>"; };
 		B4EB223422B9FADD007F5A52 /* SwiftSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwiftSocket.h; sourceTree = "<group>"; };
 		B4EB223522B9FADD007F5A52 /* Socket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 		B497619A22B4012B0096F864 = {
 			isa = PBXGroup;
 			children = (
+				B4A7EE6222C0BA580097356B /* 2018_Charlie Puth - Marvin Gaye.mp3 */,
 				B4EB223622B9FADE007F5A52 /* Result.swift */,
 				B4EB223522B9FADD007F5A52 /* Socket.swift */,
 				B4EB223422B9FADD007F5A52 /* SwiftSocket.h */,
@@ -249,6 +252,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B4A7EE6322C0BA580097356B /* 2018_Charlie Puth - Marvin Gaye.mp3 in Resources */,
 				B49761B122B4012D0096F864 /* LaunchScreen.storyboard in Resources */,
 				B49761AE22B4012D0096F864 /* Assets.xcassets in Resources */,
 				B49761AC22B4012B0096F864 /* Main.storyboard in Resources */,
