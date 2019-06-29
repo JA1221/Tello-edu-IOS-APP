@@ -7,13 +7,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var receiveData: UILabel!
     @IBOutlet weak var tello1_IP: UITextField!
     @IBOutlet weak var sendPort1: UITextField!
-    @IBOutlet weak var speed: UILabel!    
+    @IBOutlet weak var speed: UILabel!
     @IBOutlet weak var dist: UILabel!
     
     //設定 IP Port , 指定UDP連線
     var serverPort = 9453
     var host = "192.168.43.103"
-    var port = 9453
+    var port = 8889
     
     var client: UDPClient?
     var batteryClient: UDPClient?
@@ -31,7 +31,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        receiveData.layer.cornerRadius = 10
+        
         client = UDPClient(address: host, port: Int32(port),myAddresss: "", myPort: Int32(serverPort))//建立 UDP 連線
         
         readData()
@@ -65,6 +67,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     //================ bt =====================
     @IBAction func command(_ sender: Any) {//sdk模式
         send("command")
+        send("mon")
     }
     @IBAction func takeoff(_ sender: Any) {//起飛
         send("takeoff")
@@ -125,9 +128,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
         let queue = DispatchQueue(label: "com.nkust.dodo")
         
         queue.async {
-            self.send("go 0 0 150 10 m3")
+            self.send("takeoff")
             self.wait()
-            self.send("go 0 0 150 10 m4")
+            self.send("go 0 0 150 " + String(self.speedVal) + " m3")
+            self.wait()
+            self.send("go 0 0 150 " + String(self.speedVal) + " m4")
             self.wait()
             self.send("ccw 45")
             self.wait()
@@ -147,6 +152,32 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
         showMessage(data)
     }
+    //================= mission pad =================
+    @IBAction func pad1(_ sender: Any) {
+        send("go 0 0 100 " + String(speedVal) + " m1")
+    }
+    @IBAction func pad2(_ sender: Any) {
+        send("go 0 0 100 " + String(speedVal) + " m2")
+    }
+    @IBAction func pad3(_ sender: Any) {
+        send("go 0 0 100 " + String(speedVal) + " m3")
+    }
+    @IBAction func pad4(_ sender: Any) {
+        send("go 0 0 100 " + String(speedVal) + " m4")
+    }
+    @IBAction func pad5(_ sender: Any) {
+        send("go 0 0 100 " + String(speedVal) + " m5")
+    }
+    @IBAction func pad6(_ sender: Any) {
+        send("go 0 0 100 " + String(speedVal) + " m6")
+    }
+    @IBAction func pad7(_ sender: Any) {
+        send("go 0 0 100 " + String(speedVal) + " m7")
+    }
+    @IBAction func pad8(_ sender: Any) {
+        send("go 0 0 100 " + String(speedVal) + " m8")
+    }
+    
     //================= slider ====================
     @IBAction func speedValue(_ sender: UISlider) {//設定飛行速度
         sender.value.round()
@@ -164,34 +195,37 @@ class ViewController: UIViewController, UITextFieldDelegate {
     func send(_ s: String){
         guard let client = client else {return}//當client存在時才往下執行
         
-        showMessage("")
+        showMessage("wait...")
         _ = client.send(string: s)
         print("i send!")
+        readData()
     }
     func readData(){
         let queue = DispatchQueue(label: "com.nkust.JA1221")//宣告 label需要唯一性
         queue.async {
-            while true
-            {
-                guard let client = self.client else { return }
-                
-                print("i wait recv")
-                let s = client.recv(20)//最多接收20
-                if s.0==nil {continue}
-                
-                self.data = self.get_String_Data(s.0!)//存入data
-                print(self.data)
-                self.showMessage(self.data)
-                print(s.0)//資料
-                print(s.1)//來源IP
-                print(s.2)//來源Port
+            guard let client = self.client else { return }
+            
+            print("i wait recv")
+            
+            
+            var s = client.recv(20)//最多接收20
+            
+            while s.0==nil{
+                s = client.recv(20)
             }
             
+            self.data = self.get_String_Data(s.0!)//存入data
+            print(self.data)
+            self.showMessage(self.data)
+            print("----------------------")
+            print(s.0)//資料
+            print(s.1)//來源IP
+            print(s.2)//來源Port
+            print("----------------------")
         }
     }
     func showMessage(_ s: String){
         DispatchQueue.main.async {
-            print("hello")
             self.receiveData.text = s//主執行緒設定label text 直接顯示
         }
     }
@@ -218,6 +252,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidDisappear(_ animated: Bool) {
         client?.close()
+        audioPlayer.stop()
     }
     
 }

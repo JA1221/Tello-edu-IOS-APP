@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B437BA3C22BC9280006661B4 /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BA3B22BC9280006661B4 /* test.swift */; };
 		B49761A722B4012B0096F864 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49761A622B4012B0096F864 /* AppDelegate.swift */; };
 		B49761A922B4012B0096F864 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49761A822B4012B0096F864 /* ViewController.swift */; };
 		B49761AC22B4012B0096F864 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B49761AA22B4012B0096F864 /* Main.storyboard */; };
@@ -40,7 +39,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B437BA3B22BC9280006661B4 /* test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
 		B49761A322B4012B0096F864 /* Tello.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tello.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B49761A622B4012B0096F864 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B49761A822B4012B0096F864 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -124,7 +122,6 @@
 				B49761AD22B4012D0096F864 /* Assets.xcassets */,
 				B49761AF22B4012D0096F864 /* LaunchScreen.storyboard */,
 				B49761B222B4012D0096F864 /* Info.plist */,
-				B437BA3B22BC9280006661B4 /* test.swift */,
 			);
 			path = Tello;
 			sourceTree = "<group>";
@@ -285,7 +282,6 @@
 				B4EB223C22B9FADE007F5A52 /* yudpsocket.c in Sources */,
 				B49761A722B4012B0096F864 /* AppDelegate.swift in Sources */,
 				B4EB223A22B9FADE007F5A52 /* Result.swift in Sources */,
-				B437BA3C22BC9280006661B4 /* test.swift in Sources */,
 				B4EB223922B9FADE007F5A52 /* Socket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
