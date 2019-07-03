@@ -24,20 +24,18 @@ class ViewController: UIViewController, UITextFieldDelegate {
     var speedVal = 50
     var distVal = 30
     let defaultValue = 30
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return UIInterfaceOrientationMask.portrait
-    }
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         receiveData.layer.cornerRadius = 10
         
-        client = UDPClient(address: host, port: Int32(port),myAddresss: "", myPort: Int32(serverPort))//建立 UDP 連線
-        
+        //建立 UDP 連線
+        client = UDPClient(address: host, port: Int32(port),myAddresss: "", myPort: Int32(serverPort))
         readData()
         
+        //播放音樂
         let url = Bundle.main.url(forResource: "2018_Charlie Puth - Marvin Gaye", withExtension: "mp3")
         do {
             audioPlayer = try AVAudioPlayer(contentsOf: url!)
@@ -60,11 +58,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
         host = tello1_IP.text ?? "192.168.10.1"
         serverPort = Int(sendPort1.text ?? "9453")!
         
-        client?.close()
+        client?.close()//一定要先close 不然port會佔用
         client = UDPClient(address: host, port: Int32(port),myAddresss: "", myPort: Int32(serverPort))
         receiveData.text = "set IP:" + host + ", send port:" + String(serverPort)
     }
-    //================ bt =====================
+//================ bt =====================
     @IBAction func command(_ sender: Any) {//sdk模式
         send("command")
         send("mon")
@@ -98,7 +96,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBAction func battery_Info(_ sender: Any) {//電池資訊
         send("battery?")
     }
-    //=============== bt control=============
+//=============== bt control=============
     @IBAction func forward(_ sender: Any) {
         send("forward " + String(defaultValue))
     }
@@ -130,9 +128,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
         queue.async {
             self.send("takeoff")
             self.wait()
-            self.send("go 0 0 150 " + String(self.speedVal) + " m3")
+            self.send("go 0 0 150 " + String(self.speedVal) + " m1")
             self.wait()
-            self.send("go 0 0 150 " + String(self.speedVal) + " m4")
+            self.send("go 0 0 150 " + String(self.speedVal) + " m2")
             self.wait()
             self.send("ccw 45")
             self.wait()
@@ -144,15 +142,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
             self.wait()
             self.send("land")
         }
-        
     }
+    //等待回傳才執行下個指令
     func wait(){
         data = ""
         while(data == ""){
         }
         showMessage(data)
     }
-    //================= mission pad =================
+//================= mission pad =================
     @IBAction func pad1(_ sender: Any) {
         send("go 0 0 100 " + String(speedVal) + " m1")
     }
@@ -178,58 +176,65 @@ class ViewController: UIViewController, UITextFieldDelegate {
         send("go 0 0 100 " + String(speedVal) + " m8")
     }
     
-    //================= slider ====================
+//================= slider ====================
     @IBAction func speedValue(_ sender: UISlider) {//設定飛行速度
-        sender.value.round()
+        sender.value.round()//取整數
         let speedValue = Int(sender.value)
         speed.text = speedValue.description
         send("speed " + speedValue.description)
     }
-    @IBAction func distValue(_ sender: UISlider) {
+    @IBAction func distValue(_ sender: UISlider) {//設定飛行距離
         sender.value.round()
         let speedValue = Int(sender.value)
         dist.text = speedValue.description
     }
     
-    //============================================
+//===================== sned & recv =======================
     func send(_ s: String){
         guard let client = client else {return}//當client存在時才往下執行
         
         showMessage("wait...")
         _ = client.send(string: s)
         print("i send!")
-        readData()
     }
     func readData(){
         let queue = DispatchQueue(label: "com.nkust.JA1221")//宣告 label需要唯一性
-        queue.async {
-            guard let client = self.client else { return }
-            
-            print("i wait recv")
-            
-            
-            var s = client.recv(20)//最多接收20
-            
-            while s.0==nil{
-                s = client.recv(20)
+        queue.async {//多執行緒
+            while true{
+                guard let client = self.client else { return }
+                print("i wait recv")
+                
+                var s = client.recv(20)//最多接收20
+                while s.0==nil{
+                    s = client.recv(20)
+                }
+                
+                //存入data
+                self.data = self.get_String_Data(s.0!)
+                print(self.data)
+                self.showMessage(self.data)
+                print("----------------------")
+                print(s.0!)//資料 ->[byte]
+                print(s.1)//來源IP
+                print(s.2)//來源Port
+                print("----------------------")
             }
-            
-            self.data = self.get_String_Data(s.0!)//存入data
-            print(self.data)
-            self.showMessage(self.data)
-            print("----------------------")
-            print(s.0)//資料
-            print(s.1)//來源IP
-            print(s.2)//來源Port
-            print("----------------------")
         }
     }
+    //udp回傳值 data的 (byte陣列 轉 string)
+    func get_String_Data(_ data: [Byte]) -> (String){
+        let string1 = String(data: Data(data), encoding: .utf8) ?? ""
+        return string1
+    }
+//======================================================================
+    
+    //顯示資訊 主執行緒
     func showMessage(_ s: String){
         DispatchQueue.main.async {
             self.receiveData.text = s//主執行緒設定label text 直接顯示
         }
     }
-    
+    //輸入指令區 按下enter 送出
     func textFieldShouldReturn(_ textField: UITextField ) -> Bool{
         if let text = sendData.text{
             send( text)//傳送 textView文字指令
@@ -239,17 +244,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
-    
-    func get_String_Data(_ data: [Byte]) -> (String){
-        let string1 = String(data: Data(data), encoding: .utf8) ?? ""
-        return string1
-    }
-    
+    //點鍵盤外 鍵盤收起
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
-    
-    
+    //離開時 關閉udp ＆ 音樂停止
     override func viewDidDisappear(_ animated: Bool) {
         client?.close()
         audioPlayer.stop()

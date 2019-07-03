@@ -39,6 +39,7 @@ import Foundation
 @_silgen_name("enable_broadcast") func c_enable_broadcast(_ fd:Int32)
 
 open class UDPClient: Socket {
+    //初始化
     public override init(address: String, port: Int32) {
         let remoteipbuff: [Int8] = [Int8](repeating: 0x0,count: 16)
         let ret = c_yudpsocket_get_server_ip(address, ip: remoteipbuff)
@@ -54,7 +55,7 @@ open class UDPClient: Socket {
             self.fd = fd
         }
     }
-    //指定client IP & Port
+    //初始化 ＋ 指定client IP & Port
     public convenience init(address: String, port: Int32, myAddresss: String, myPort: Int32) {
         self.init(address: address, port: port)
         
