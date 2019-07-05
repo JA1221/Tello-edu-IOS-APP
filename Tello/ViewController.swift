@@ -11,12 +11,12 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var dist: UILabel!
     
     //設定 IP Port , 指定UDP連線
-    var serverPort = 9453
+    var myPort = 60000
     var host = "192.168.43.103"
     var port = 8889
     
     var client: UDPClient?
-    var batteryClient: UDPClient?
+//    var stateUDP: UDPServer?
     var audioPlayer: AVAudioPlayer!
     var data = ""
     
@@ -32,8 +32,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
         receiveData.layer.cornerRadius = 10
         
         //建立 UDP 連線
-        client = UDPClient(address: host, port: Int32(port),myAddresss: "", myPort: Int32(serverPort))
+        client = UDPClient(address: host, port: Int32(port),myAddresss: "", myPort: Int32(myPort))
         readData()
+        //建立 stateUDP
+//        stateUDP = UDPServer(address: "", port: 8890)
+//        readState()
         
         //播放音樂
         let url = Bundle.main.url(forResource: "2018_Charlie Puth - Marvin Gaye", withExtension: "mp3")
@@ -56,11 +59,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     @IBAction func setAdress(_ sender: Any) {//設定tello ip ＆ 本機port
         host = tello1_IP.text ?? "192.168.10.1"
-        serverPort = Int(sendPort1.text ?? "9453")!
+        myPort = Int(sendPort1.text ?? "60000")!
         
         client?.close()//一定要先close 不然port會佔用
-        client = UDPClient(address: host, port: Int32(port),myAddresss: "", myPort: Int32(serverPort))
-        receiveData.text = "set IP:" + host + ", send port:" + String(serverPort)
+        client = UDPClient(address: host, port: Int32(port),myAddresss: "", myPort: Int32(myPort))
+        receiveData.text = "set IP:" + host + ", send port:" + String(myPort)
     }
 //================ bt =====================
     @IBAction func command(_ sender: Any) {//sdk模式
@@ -197,17 +200,27 @@ class ViewController: UIViewController, UITextFieldDelegate {
         _ = client.send(string: s)
         print("i send!")
     }
+    
+    //udp回傳值 data的 (byte陣列 轉 string)
+    func get_String_Data(_ data: [Byte]) -> (String){
+        let string1 = String(data: Data(data), encoding: .utf8) ?? ""
+        return string1
+    }
+    
     func readData(){
-        let queue = DispatchQueue(label: "com.nkust.JA1221")//宣告 label需要唯一性
+        let queue = DispatchQueue(label: "com.nkust.JA1221.readData")//宣告 label需要唯一性
         queue.async {//多執行緒
             while true{
                 guard let client = self.client else { return }
-                print("i wait recv")
-                
-                var s = client.recv(20)//最多接收20
-                while s.0==nil{
-                    s = client.recv(20)
+                if client.fd == nil{
+                    print("socket 設定中")
+                    continue
                 }
+                
+                print("i wait recv")
+                let s = client.recv(20)//最多接收20
+                print("123")
+                if s.0 == nil{continue}//處理socket設定時 為空資料時錯誤
                 
                 //存入data
                 self.data = self.get_String_Data(s.0!)
@@ -221,11 +234,34 @@ class ViewController: UIViewController, UITextFieldDelegate {
             }
         }
     }
-    //udp回傳值 data的 (byte陣列 轉 string)
-    func get_String_Data(_ data: [Byte]) -> (String){
-        let string1 = String(data: Data(data), encoding: .utf8) ?? ""
-        return string1
-    }
+    
+//    func readState(){
+//        let queue = DispatchQueue(label: "com.nkust.JA1221.readState")
+//        queue.async {
+//            while true{
+//                guard let stateUDP = self.stateUDP else { return }
+//                print("waiting recv state")
+//
+//                let s = stateUDP.recv(500)
+//                let stateDate = self.get_String_Data(s.0!)
+//                var dictionary = [String: String]()
+//
+//                let line = stateDate.components(separatedBy: ";")
+//                for i in line{
+//                    let tmp = i.components(separatedBy: ":")
+//                    if(tmp.count == 2){
+//                        dictionary[tmp[0]] = tmp[1]
+//                    }
+//                }
+//                print(dictionary)
+//                print("battery:" + (dictionary["bat"] ?? "??"))
+//                sleep(3)
+//            }
+//        }
+//    }
+    
+    
+    
 //======================================================================
     
     //顯示資訊 主執行緒
