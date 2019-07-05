@@ -5,6 +5,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var sendData: UITextField!
     @IBOutlet weak var receiveData: UILabel!
+    @IBOutlet weak var batteryLabel: UILabel!
     @IBOutlet weak var tello1_IP: UITextField!
     @IBOutlet weak var sendPort1: UITextField!
     @IBOutlet weak var speed: UILabel!
@@ -16,7 +17,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     var port = 8889
     
     var client: UDPClient?
-//    var stateUDP: UDPServer?
+    var stateUDP: UDPServer?
     var audioPlayer: AVAudioPlayer!
     var data = ""
     
@@ -24,6 +25,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
     var speedVal = 50
     var distVal = 30
     let defaultValue = 30
+    
+    var stateDate = ""
+    var dictionary = [String: String]()
 
 
     override func viewDidLoad() {
@@ -32,11 +36,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
         receiveData.layer.cornerRadius = 10
         
         //建立 UDP 連線
-        client = UDPClient(address: host, port: Int32(port),myAddresss: "", myPort: Int32(myPort))
+        setAdress((Any).self)
+//        client = UDPClient(address: host, port: Int32(port),myAddresss: "", myPort: Int32(myPort))
         readData()
+        
         //建立 stateUDP
-//        stateUDP = UDPServer(address: "", port: 8890)
-//        readState()
+        stateUDP = UDPServer(address: "", port: 8890)
+        readState()
         
         //播放音樂
         let url = Bundle.main.url(forResource: "2018_Charlie Puth - Marvin Gaye", withExtension: "mp3")
@@ -46,7 +52,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
         } catch {
             print("Error:", error.localizedDescription)
         }
+
         audioPlayer.play()
+        
     }
 //====================== button =================
     @IBAction func onClick(_ sender: Any) {//按鈕發送指令
@@ -65,6 +73,17 @@ class ViewController: UIViewController, UITextFieldDelegate {
         client = UDPClient(address: host, port: Int32(port),myAddresss: "", myPort: Int32(myPort))
         receiveData.text = "set IP:" + host + ", send port:" + String(myPort)
     }
+    @IBAction func showInfo(_ sender: Any) {
+        var s = ""
+        for i in stateDate.components(separatedBy: ";"){
+            s += i + "\n"
+        }
+        
+        let info = UIAlertController(title: "Tello 資訊", message: s, preferredStyle: .alert)
+        info.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(info, animated: true, completion: nil)
+    }
+    
 //================ bt =====================
     @IBAction func command(_ sender: Any) {//sdk模式
         send("command")
@@ -219,7 +238,6 @@ class ViewController: UIViewController, UITextFieldDelegate {
                 
                 print("i wait recv")
                 let s = client.recv(20)//最多接收20
-                print("123")
                 if s.0 == nil{continue}//處理socket設定時 為空資料時錯誤
                 
                 //存入data
@@ -235,32 +253,29 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-//    func readState(){
-//        let queue = DispatchQueue(label: "com.nkust.JA1221.readState")
-//        queue.async {
-//            while true{
-//                guard let stateUDP = self.stateUDP else { return }
-//                print("waiting recv state")
-//
-//                let s = stateUDP.recv(500)
-//                let stateDate = self.get_String_Data(s.0!)
-//                var dictionary = [String: String]()
-//
-//                let line = stateDate.components(separatedBy: ";")
-//                for i in line{
-//                    let tmp = i.components(separatedBy: ":")
-//                    if(tmp.count == 2){
-//                        dictionary[tmp[0]] = tmp[1]
-//                    }
-//                }
-//                print(dictionary)
-//                print("battery:" + (dictionary["bat"] ?? "??"))
-//                sleep(3)
-//            }
-//        }
-//    }
-    
-    
+    func readState(){
+        let queue = DispatchQueue(label: "com.nkust.JA1221.readState")
+        queue.async {
+            while true{
+                guard let stateUDP = self.stateUDP else { return }
+                print("waiting recv state")
+
+                let s = stateUDP.recv(1000)
+                self.stateDate = self.get_String_Data(s.0!)
+                
+                let line = self.stateDate.components(separatedBy: ";")
+                for i in line{
+                    let tmp = i.components(separatedBy: ":")
+                    if(tmp.count == 2){
+                        self.dictionary[tmp[0]] = tmp[1]
+                    }
+                }
+
+                print("電量：" + (self.dictionary["bat"] ?? "?"))
+                self.showBattery(self.dictionary["bat"] ?? "？")
+            }
+        }
+    }
     
 //======================================================================
     
@@ -270,6 +285,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
             self.receiveData.text = s//主執行緒設定label text 直接顯示
         }
     }
+    
+    func showBattery(_ s: String){
+        DispatchQueue.main.async {
+            self.batteryLabel.text = "電量：" + s// 設定電量
+        }
+    }
+    
     //輸入指令區 按下enter 送出
     func textFieldShouldReturn(_ textField: UITextField ) -> Bool{
         if let text = sendData.text{
@@ -280,6 +302,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
+
     //點鍵盤外 鍵盤收起
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
