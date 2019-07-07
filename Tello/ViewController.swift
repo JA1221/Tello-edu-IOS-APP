@@ -309,7 +309,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     //離開時 關閉udp ＆ 音樂停止
     override func viewDidDisappear(_ animated: Bool) {
-        client?.close()
+//        client?.close()
         audioPlayer.stop()
     }
     
