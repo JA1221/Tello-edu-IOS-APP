@@ -13,7 +13,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     //設定 IP Port , 指定UDP連線
     var myPort = 60000
-    var host = "192.168.43.103"
+    var host = "192.168.10.1"
     var port = 8889
     
     var client: UDPClient?
